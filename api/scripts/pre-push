@@ -1,0 +1,10 @@
+#!/bin/sh
+set -euxo pipefail
+
+echo "***** Running snyk test *****"
+snyk test --dev --prune-repeated-subdependencies --severity-threshold=medium
+echo "***** Done with snyk test *****"
+
+echo "***** Running snyk code test *****"
+snyk code test --severity-threshold=medium || true
+echo "***** Done with snyk code test *****"

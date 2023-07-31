@@ -1,0 +1,22 @@
+version: "3.3"
+services:
+  ui:
+    container_name: dks-ui
+    ports:
+      - 3000:3000
+    build:
+      context: ${DKS_UI_DIR}
+      args:
+        - NPM_TOKEN=${NPM_TOKEN}
+    env_file:
+      - .env
+    depends_on:
+      - api
+  api:
+    container_name: dks-api
+    ports:
+      - 8080:8080
+    build:
+      context: .
+    env_file:
+      - .env

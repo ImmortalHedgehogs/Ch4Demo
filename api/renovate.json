@@ -1,0 +1,23 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "config:base"
+    ],
+    "labels": ["dependencies"],
+    "semanticCommits": "enabled",
+    "major": {
+        "dependencyDashboardApproval": true,
+        "labels": ["major"]
+    },
+    "vulnerabilityAlerts": {
+        "labels": ["security"],
+        "assignees": ["@liatrio/cybersecurity-guild"]
+    },
+    "packageRules": [
+        {
+            "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+            "automerge": true,
+            "automergeType": "branch"
+        }
+    ]
+}

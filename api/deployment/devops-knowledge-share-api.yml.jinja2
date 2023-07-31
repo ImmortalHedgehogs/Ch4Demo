@@ -1,0 +1,229 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ appname }}
+  labels:
+    app: {{ appname }}
+    version: {{ tag }}
+    app.kubernetes.io/name: {{ appname }}
+    app.kubernetes.io/version: {{ tag }}
+    liatrio.com/managed-by-team: {{ teamname }}
+    liatrio.com/repo: {{ reponame }}
+  annotations:
+# These annotations will setup http health checks on Datadog
+# https://docs.datadoghq.com/integrations/http_check/
+    ad.datadoghq.com/service.check_names: '["http_check", "http_check"]'
+    ad.datadoghq.com/service.init_configs: '[{},{}]'
+    ad.datadoghq.com/service.instances: |
+      [
+          {
+            "name": "{{ appname }}.{{ namespace }}.svc.cluster.local",
+            "url": "http://{{ appname }}.{{ namespace }}.svc.cluster.local/actuator/health/app",
+            "timeout": 10,
+            "include_content": true,
+            "content_match": "UP",
+            "http_response_status_code": "200",
+            "ignore_ssl_warning": true,
+            "disable_ssl_validation": true,
+            "check_certificate_expiration": false,
+            "tags": ["liatrio-di:true", "check_url_type:internal", "service:{{ appname }}"]
+
+          },
+          {
+            "name": "{{ fqdn }}",
+            "url": "https://{{ fqdn }}/actuator/health/app",
+            "timeout": 10,
+            "include_content": true,
+            "content_match": "UP",
+            "http_response_status_code": "200",
+            "ignore_ssl_warning": true,
+            "disable_ssl_validation": true,
+            "check_certificate_expiration": false,
+            "tags": ["liatrio-di:true", "check_url_type:external", "service:{{ appname }}"]
+          }
+      ]
+spec:
+  selector:
+    app: {{ appname }}
+  ports:
+    - name: "http-spring"
+      port: 80
+      targetPort: 8080
+    - name: "tcp-jvm-debug"
+      port: 5005
+      targetPort: 5005
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ appname }}
+  annotations:
+    liatrio.com/veracodeAppID: "VERACODE_APP_ID"
+  labels:
+    app: {{ appname }}
+    version: {{ tag }}
+    app.kubernetes.io/name: {{ appname }}
+    app.kubernetes.io/version: {{ tag }}
+    liatrio.com/managed-by-team: {{ teamname }}
+    liatrio.com/repo: {{ reponame }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ appname }}
+  template:
+    metadata:
+      labels:
+        app: {{ appname }}
+        version: {{ tag }}
+        app.kubernetes.io/name: {{ appname }}
+        app.kubernetes.io/version: {{ tag }}
+        liatrio.com/managed-by-team: {{ teamname }}
+        liatrio.com/repo: {{ reponame }}
+    spec:
+      containers:
+      - name: {{ appname }}
+        image: {{ registry }}/{{ reponame }}:{{ tag }}
+        ports:
+        - containerPort: 8080
+          name: "http-spring"
+        - containerPort: 5005
+          name: "tcp-jvm-debug"
+        resources:
+          limits:
+            cpu: 1.5
+            memory: "1Gi"
+          requests:
+            cpu: 50m
+            memory: "256Mi"
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/app
+            port: 8080
+          initialDelaySeconds: 120
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/app
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 5
+        env:
+        - name: "JAVA_ENABLE_DEBUG"
+          value: "{{ java_enable_debug }}"
+        - name: DD_AGENT_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: DD_SERVICE_NAME
+          value: {{ appname }}
+        - name: DD_JMXFETCH_ENABLED
+          value: "true"
+        - name: DD_TRACE_GLOBAL_TAGS
+          value: "env:{{ environment }}"
+
+      imagePullSecrets:
+      - name: {{ reponame }}-image-pull-secrets
+---
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ appname }}
+  labels:
+    app: {{ appname }}
+    version: {{ tag }}
+    app.kubernetes.io/name: {{ appname }}
+    app.kubernetes.io/version: {{ tag }}
+    liatrio.com/managed-by-team: {{ teamname }}
+    liatrio.com/repo: {{ reponame }}
+
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ appname }}
+  minReplicas: 1
+  maxReplicas: 1
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      targetAverageUtilization: 70
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  annotations:
+    type: internal
+  name: {{ appname }}
+  labels:
+    app: {{ appname }}
+    version: {{ tag }}
+    app.kubernetes.io/name: {{ appname }}
+    app.kubernetes.io/version: {{ tag }}
+    liatrio.com/managed-by-team: {{ teamname }}
+    liatrio.com/repo: {{ reponame }}
+spec:
+  selector:
+    istio: ilbgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "{{ fqdn }}"
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    hosts:
+    - "{{ fqdn }}"
+    tls:
+      credentialName: {{ credential_name }}
+      mode: SIMPLE
+      minProtocolVersion: TLSV1_2
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ appname }}
+  labels:
+    app: {{ appname }}
+    version: {{ tag }}
+    app.kubernetes.io/name: {{ appname }}
+    app.kubernetes.io/version: {{ tag }}
+    liatrio.com/managed-by-team: {{ teamname }}
+    liatrio.com/repo: {{ reponame }}
+spec:
+  hosts:
+  - "{{ fqdn }}"
+  gateways:
+  - {{ appname }}
+  http:
+  - route:
+    - destination:
+        port:
+          number: 80
+        host: {{ appname }}
+---
+
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ appname }}
+  labels:
+    app: {{ appname }}
+    version: {{ tag }}
+    app.kubernetes.io/name: {{ appname }}
+    app.kubernetes.io/version: {{ tag }}
+    liatrio.com/managed-by-team: {{ teamname }}
+    liatrio.com/repo: {{ reponame }}
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: {{ appname }}

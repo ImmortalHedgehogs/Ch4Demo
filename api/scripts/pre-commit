@@ -1,0 +1,14 @@
+#!/bin/sh
+set -euxo pipefail
+
+echo "***** Running yamllint *****"
+yamllint .
+echo "***** Done with yamllint *****"
+
+echo "***** Running hadolint *****"
+hadolint ./*Dockerfile*
+echo "***** Done with hadolint *****"
+
+echo "***** Running unit tests and jacoco coverage/checkstyle/pmd Checks ******"
+./gradlew clean check
+echo "***** Done with unit tests and jacoco coverage/checkstyle/pmd Checks  ******"
