@@ -71,7 +71,7 @@ const Home: NextPage<Props> = ({ initalBlogList, enableImageURL }) => {
         <main>
           <div className={styles.bannerWrapper}>
             <div className={styles.mainBanner}>
-              <h2>DevOps Community Shared Posts</h2>
+              <h2>Hedgehogs!</h2>
               <p>
                 Let&apos;s grow this DevOps Community strong by sharing your
                 favorite article or blog post on DevOps culture, tools, platform
