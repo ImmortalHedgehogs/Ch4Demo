@@ -30,6 +30,12 @@ jobs:
       - name: Test to view the cluster
         run: az aks show --resource-group hedgehogs-chapter-4 --name hedgehogs-cluster
 
-      - name: Run docker commands
+      - name: Build new images
         run: docker compose build
+        
+      - name: Push images to acr
+        run: docker compose push
+        
+      - name: Applying new images
+        run: kubectl apply -f everything.yaml
         
