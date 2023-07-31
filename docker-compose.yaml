@@ -1,0 +1,12 @@
+version: "3"
+services:
+  webapp:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+    image: hedgehogsacr.azurecr.io/ui:latest
+  database:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    image: hedgehogsacr.azurecr.io/api:latest
