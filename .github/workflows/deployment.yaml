@@ -1,0 +1,35 @@
+name: Run Azure Login with OIDC, Push to ACI, and Deploy
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+      id-token: write
+      contents: read
+      packages: write
+jobs: 
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZ_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZ_TENANT_ID }}
+          subscription-id: ${{ secrets.AZ_SUBSCRIPTION_ID }}
+          
+      - name: Link runner to cluster
+        run: az aks get-credentials --resource-group hedgehogs-chapter-4 --name hedgehogs-cluster
+
+      - name: Log into the container registry
+        run: az acr login --name hedgehogsacr
+        
+      - name: Test to view the cluster
+        run: az aks show --resource-group hedgehogs-chapter-4 --name hedgehogs-cluster
+
+      - name: Run docker commands
+        run: docker compose build
+        
