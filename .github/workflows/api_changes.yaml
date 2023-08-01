@@ -40,4 +40,5 @@ jobs:
         run: export TAG=${{ github.run_number }}
         
       - name: Restart deployments to apply changes
-        run: envsubst < ./yaml_files/api-deployment.yaml | kubectl apply -f -
+        run: envsubst < ./yaml_files/api-deployment.yaml
+        
