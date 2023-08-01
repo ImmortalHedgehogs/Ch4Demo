@@ -28,5 +28,5 @@ jobs:
 
       - name: Applying Infrastructure Changes
         run: |
-          kubectl apply -k yaml_files
+          kubectl apply -f yaml_files
 
