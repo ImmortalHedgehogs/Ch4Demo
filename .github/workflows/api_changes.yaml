@@ -37,7 +37,8 @@ jobs:
           docker push hedgehogsacr.azurecr.io/api:${{ github.run_number }}
 
       - name: Export github.run_number
-        run: export TAG=${{ github.run_number }}
+        run: |
+          echo "TAG=${{ github.run_number }}" >> $GITHUB_ENV
         
       - name: Restart deployments to apply changes
-        run: envsubst '${TAG}' < ./yaml_files/api-deployment.yaml
+        run: envsubst < ./yaml_files/api-deployment.yaml
