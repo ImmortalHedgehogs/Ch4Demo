@@ -27,7 +27,7 @@ jobs:
         run: az aks get-credentials --resource-group hedgehogs-chapter-4 --name hedgehogs-cluster
 
       - name: Build new UI image
-        run: docker build -t hedgehogsacr.azurecr.io/ui:latest /ui/Dockerfile 
+        run: docker build -t hedgehogsacr.azurecr.io/ui:latest ./ui/ 
         
       - name: Log into ACR and push images
         run: |
