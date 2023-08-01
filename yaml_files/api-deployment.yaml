@@ -4,7 +4,7 @@ metadata:
   name: api
   namespace: ch4-demo
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       name: api
@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
       - name: api
-        image: hedgehogsacr.azurecr.io/api:latest
+        image: hedgehogsacr.azurecr.io/api:${github.run_number}
         ports:
         - containerPort: 8080
