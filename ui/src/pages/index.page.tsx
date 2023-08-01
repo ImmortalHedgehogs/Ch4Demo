@@ -76,7 +76,7 @@ const Home: NextPage<Props> = ({ initalBlogList, enableImageURL }) => {
               <p>
                 Let&apos;s grow this DevOps Community strong by sharing your
                 favorite article or blog post on DevOps culture, tools, platform
-                and more!
+                and more! 
               </p>
               {/* <p>
                 This information just changed dynamically using continuous deployment
