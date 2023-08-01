@@ -40,5 +40,4 @@ jobs:
         run: export TAG=${{ github.run_number }}
         
       - name: Restart deployments to apply changes
-        run: envsubst < ./yaml_files/api-deployment.yaml
-        
+        run: envsubst '${TAG}' < ./yaml_files/api-deployment.yaml
