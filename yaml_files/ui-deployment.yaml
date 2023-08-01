@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: ui
-        image: hedgehogsacr.azurecr.io/ui:latest
+        image: hedgehogsacr.azurecr.io/ui:${github.run_number}
         ports:
         - containerPort: 3000
         env:

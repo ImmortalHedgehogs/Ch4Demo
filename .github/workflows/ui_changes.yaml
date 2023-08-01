@@ -27,12 +27,12 @@ jobs:
         run: az aks get-credentials --resource-group hedgehogs-chapter-4 --name hedgehogs-cluster
 
       - name: Build new UI image
-        run: docker build -t hedgehogsacr.azurecr.io/ui:latest ./ui/ 
+        run: docker build -t hedgehogsacr.azurecr.io/ui:${{ github.run_number}} /ui/Dockerfile 
         
       - name: Log into ACR and push images
         run: |
           az acr login --name hedgehogsacr
-          docker push hedgehogsacr.azurecr.io/ui:latest
+          docker push hedgehogsacr.azurecr.io/ui:${{ github.run_number }}
         
       - name: Restart deployments to apply changes
-        run: kubectl rollout restart deployments/ui --namespace ch4-demo
+        run: envsubstr < ./yaml_files/ui-deployment.yaml | kubectl apply -f -
