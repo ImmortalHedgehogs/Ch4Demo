@@ -30,8 +30,7 @@ jobs:
 
       - name: Build new UI image
         run: |
-          DOCKER_BUILDKIT=1
-          docker build -t hedgehogsacr.azurecr.io/ui:${{ github.run_number }} ./ui/ 
+          DOCKER_BUILDKIT=1 docker build -t hedgehogsacr.azurecr.io/ui:${{ github.run_number }} ./ui/ 
         
       - name: Log into ACR and push images
         run: |
