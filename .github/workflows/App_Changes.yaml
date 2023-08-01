@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - './ui/**'
+      - './api/**'
 
 permissions:
       id-token: write
@@ -36,8 +39,8 @@ jobs:
       - name: Push images to acr
         run: docker compose push
         
-      - name: Applying new images
-        run: kubectl apply -f everything.yaml
+      # - name: Applying new images
+      #   run: kubectl apply -f everything.yaml
         
       - name: Restart deployments to apply changes
         run: kubectl rollout restart deployments --namespace ch4-demo
