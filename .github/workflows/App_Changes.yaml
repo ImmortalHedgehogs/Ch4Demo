@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - './ui/**'
+      - './api/**'
 
 permissions:
       id-token: write
@@ -30,13 +33,13 @@ jobs:
       - name: Build new images
         run: docker compose build
         
-      - name: Log into the container registry and push images
+      - name: Log into ACR and push images
         run: |
           az acr login --name hedgehogsacr
           docker compose push
-        
-      - name: Create deployments, ingress, and services
-        run: kubectl apply -f everything.yaml
+
+      # - name: Applying new images
+      #   run: kubectl apply -f everything.yaml
         
       - name: Restart deployments to apply changes
         run: kubectl rollout restart deployments --namespace ch4-demo
