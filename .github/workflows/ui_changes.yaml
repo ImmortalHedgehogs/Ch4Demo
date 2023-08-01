@@ -1,11 +1,10 @@
-name: Run Azure Login with OIDC, Push to ACI, and Deploy
+name: Run Azure Login with OIDC, Push to ACR, and Rollout UI Deployment
 on:
   push:
     branches:
       - main
     paths:
       - 'ui/**'
-      - 'api/**'
 
 permissions:
       id-token: write
@@ -26,20 +25,14 @@ jobs:
           
       - name: Link runner to cluster
         run: az aks get-credentials --resource-group hedgehogs-chapter-4 --name hedgehogs-cluster
-        
-      # - name: Test to view the cluster
-      #   run: az aks show --resource-group hedgehogs-chapter-4 --name hedgehogs-cluster
 
-      - name: Build new images
-        run: docker compose build
+      - name: Build new UI image
+        run: docker build -t hedgehogsacr.azurecr.io/ui:latest /ui/Dockerfile 
         
       - name: Log into ACR and push images
         run: |
           az acr login --name hedgehogsacr
-          docker compose push
-
-      # - name: Applying new images
-      #   run: kubectl apply -f everything.yaml
+          docker push hedgehogsacr.azurecr.io/ui:latest
         
       - name: Restart deployments to apply changes
-        run: kubectl rollout restart deployments --namespace ch4-demo
+        run: kubectl rollout restart deployments/ui --namespace ch4-demo
