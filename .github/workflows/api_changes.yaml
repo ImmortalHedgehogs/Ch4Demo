@@ -41,4 +41,4 @@ jobs:
           echo "TAG=${{ github.run_number }}" >> $GITHUB_ENV
         
       - name: Restart deployments to apply changes
-        run: envsubst < ./yaml_files/api-deployment.yaml
+        run: envsubst < ./yaml_files/api-deployment.yaml | kubectl apply -f -
