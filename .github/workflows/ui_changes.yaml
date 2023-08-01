@@ -28,55 +28,16 @@ jobs:
         run: az aks get-credentials --resource-group hedgehogs-chapter-4 --name hedgehogs-cluster
 
       - name: Build new UI image
-        run: docker build -t hedgehogsacr.azurecr.io/ui:latest ./ui/ 
+        run: docker build -t hedgehogsacr.azurecr.io/ui:${{ github.run_number }} ./ui/ 
         
       - name: Log into ACR and push images
         run: |
           az acr login --name hedgehogsacr
-          docker push hedgehogsacr.azurecr.io/ui:latest
+          docker push hedgehogsacr.azurecr.io/ui:${{ github.run_number }}
+
+      - name: Export github.run_number
+        run: |
+          echo "TAG=${{ github.run_number }}" >> $GITHUB_ENV
         
       - name: Restart deployments to apply changes
-        run: kubectl rollout restart deployments/ui --namespace ch4-demo
-
-
-
-# name: Run Azure Login with OIDC, Push to ACR, and Rollout UI Deployment
-# on:
-#   push:
-#     branches:
-#       - main
-#     paths:
-#       - 'ui/**'
-#   workflow_dispatch:
-    
-
-# permissions:
-#       id-token: write
-#       contents: read
-#       packages: write
-# jobs: 
-#   build-and-deploy:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v3
-
-#       - name: Login to Azure CLI
-#         uses: azure/login@v1
-#         with:
-#           client-id: ${{ secrets.AZ_CLIENT_ID }}
-#           tenant-id: ${{ secrets.AZ_TENANT_ID }}
-#           subscription-id: ${{ secrets.AZ_SUBSCRIPTION_ID }}
-          
-#       - name: Link runner to cluster
-#         run: az aks get-credentials --resource-group hedgehogs-chapter-4 --name hedgehogs-cluster
-
-#       - name: Build new UI image
-#         run: docker build -t hedgehogsacr.azurecr.io/ui:${{ github.run_number}} ./ui/
-        
-#       - name: Log into ACR and push images
-#         run: |
-#           az acr login --name hedgehogsacr
-#           docker push hedgehogsacr.azurecr.io/ui:${{ github.run_number }}
-        
-#       - name: Restart deployments to apply changes
-#         run: envsubst < ./yaml_files/ui-deployment.yaml | kubectl apply -f -
+        run: envsubst < ./yaml_files/ui-deployment.yaml | kubectl apply -f -
