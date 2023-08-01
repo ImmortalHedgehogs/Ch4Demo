@@ -3,6 +3,8 @@
 
 # DevOps Knowledge Share DOB API
 
+new line
+
 > **_Note:_** Please note this is the DevOps Bootcamp version of the [DevOps Knowledge Share API](https://github.com/liatrio-delivery-povs/devops-knowledge-share-api). Some of the contents of this repo were sanitized and various links/references may no longer function.
 
 ## Prerequisites
