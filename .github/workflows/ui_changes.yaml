@@ -35,6 +35,9 @@ jobs:
         run: |
           az acr login --name hedgehogsacr
           docker push hedgehogsacr.azurecr.io/ui:${{ github.run_number }}
+
+      - name: Install envsubstr dependancy
+        run: apt-get install -y gettext-base
         
       - name: Restart deployments to apply changes
         run: envsubstr < ./yaml_files/ui-deployment.yaml | kubectl apply -f -
