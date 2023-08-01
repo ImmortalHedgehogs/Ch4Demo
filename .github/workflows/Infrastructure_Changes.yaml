@@ -28,6 +28,5 @@ jobs:
 
       - name: Applying Infrastructure Changes
         run: |
-          kubectl delete -f everything.yaml
-          kubectl apply -f everything.yaml
+          kubectl apply -k yaml_files
 
