@@ -18,7 +18,8 @@ const Layout = ({ children }: Props) => (
           <a className={styles.navbarBrand}>
             <span className={globalStyles.logo}>
               <Image
-                src="/dojo-logo-sm.png"
+                //src="/dojo-logo-sm.png"
+                src="/hedgehog.png"
                 alt="dojo-small"
                 width={50}
                 height={50}
