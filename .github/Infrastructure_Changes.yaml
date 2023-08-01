@@ -1,0 +1,33 @@
+name: Run Azure Login with OIDC, Updating Infrastructure
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'everything.yaml'
+
+permissions:
+      id-token: write
+      contents: read
+      packages: write
+jobs: 
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Login to Azure CLI
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZ_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZ_TENANT_ID }}
+          subscription-id: ${{ secrets.AZ_SUBSCRIPTION_ID }}
+          
+      - name: Link runner to cluster
+        run: az aks get-credentials --resource-group hedgehogs-chapter-4 --name hedgehogs-cluster
+
+      - name: Applying Infrastructure Changes
+        run: |
+          kubectl delete -f everything.yaml
+          kubectl apply -f everything.yaml
+
