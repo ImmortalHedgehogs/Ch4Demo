@@ -4,8 +4,8 @@ on:
     branches:
       - main
     paths:
-      - './ui/**'
-      - './api/**'
+      - 'ui/**'
+      - 'api/**'
 
 permissions:
       id-token: write
