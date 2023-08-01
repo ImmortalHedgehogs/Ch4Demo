@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
       - name: api
-        image: hedgehogsacr.azurecr.io/api:${github.run_number}
+        image: hedgehogsacr.azurecr.io/api:${TAG}
         ports:
         - containerPort: 8080
