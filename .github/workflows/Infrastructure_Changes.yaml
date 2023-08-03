@@ -26,6 +26,9 @@ jobs:
       - name: Login to ACR
         run: az acr login --name hedgehogsacr 
 
+      - name: Link runner to cluster
+        run: az aks get-credentials --resource-group hedgehogs-chapter-4 --name hedgehogs-cluster
+        
       - name: Query ACR for latest UI image
         run: echo "TAG=$(az acr repository show-tags -n hedgehogsacr --repository ui --top 1 --orderby time_desc | tr -d '["] \n')" >> $GITHUB_ENV
 
@@ -38,8 +41,6 @@ jobs:
       - name: Redeploy API
         run: envsubst < ./deployments/api-deployment.yaml | kubectl apply -f -
 
-      - name: Link runner to cluster
-        run: az aks get-credentials --resource-group hedgehogs-chapter-4 --name hedgehogs-cluster
 
       - name: Applying Infrastructure Changes
         run: |
