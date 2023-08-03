@@ -71,16 +71,16 @@ const Home: NextPage<Props> = ({ initalBlogList, enableImageURL }) => {
         <main>
           <div className={styles.bannerWrapper}>
             <div className={styles.mainBanner}>
-              <h2>DevOps Community Shared Posts</h2>
-              {/* <h2>Hedgehogs Are The Shit!</h2> */}
-              <p>
+              {/* <h2>DevOps Community Shared Posts</h2> */}
+              <h2>Hedgehogs Are The Shit!</h2>
+              {/* <p>
                 Let&apos;s grow this DevOps Community strong by sharing your
                 favorite article or blog post on DevOps culture, tools, platform
                 and more! 
-              </p>
-              {/* <p>
-                This information just changed dynamically using continuous deployment
               </p> */}
+              <p>
+                This information just changed dynamically using continuous deployment
+              </p>
             </div>
           </div>
           <div className={styles.shareForm}>
