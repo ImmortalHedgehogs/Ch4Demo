@@ -30,16 +30,16 @@ jobs:
 
       - name: Build new UI image
         run: |
-          DOCKER_BUILDKIT=1 docker build -t hedgehogsacr.azurecr.io/ui:${{ github.run_number }} ./ui/ 
+          DOCKER_BUILDKIT=1 docker build -t hedgehogsacr.azurecr.io/ui:${{ github.SHA }} ./ui/ 
         
       - name: Log into ACR and push images
         run: |
           az acr login --name hedgehogsacr
-          docker push hedgehogsacr.azurecr.io/ui:${{ github.run_number }}
+          docker push hedgehogsacr.azurecr.io/ui:${{ github.SHA }}
 
-      - name: Export github.run_number
+      - name: Export github.SHA
         run: |
-          echo "TAG=${{ github.run_number }}" >> $GITHUB_ENV
+          echo "TAG=${{ github.SHA }}" >> $GITHUB_ENV
         
       - name: Restart deployments to apply changes
         run: envsubst < ./yaml_files/ui-deployment.yaml | kubectl apply -f -
