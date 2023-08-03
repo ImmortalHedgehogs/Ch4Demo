@@ -1,7 +1,7 @@
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/liatrio-delivery-povs/devops-knowledge-share-ui/badge)](https://api.securityscorecards.dev/projects/github.com/liatrio-delivery-povs/devops-knowledge-share-ui)
 ![CodeQL](https://github.com/liatrio-delivery-povs/devops-knowledge-share-ui/workflows/CodeQL/badge.svg?branch=main)
 
-# DevOps Knowledge Share DOB UI
+# DevOps Knowledge Share DOB UI 
 
 ## Getting Started
 
