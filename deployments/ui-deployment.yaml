@@ -4,7 +4,7 @@ metadata:
   name: ui
   namespace: ch4-demo
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       name: ui
