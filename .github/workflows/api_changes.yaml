@@ -5,6 +5,8 @@ on:
       - main
     paths:
       - 'api/**'
+  workflow_dispatch:
+    
 
 permissions:
       id-token: write
@@ -27,15 +29,16 @@ jobs:
         run: az aks get-credentials --resource-group hedgehogs-chapter-4 --name hedgehogs-cluster
 
       - name: Build new API image
-        run: docker build -t hedgehogsacr.azurecr.io/api:latest ./api/
+        run: docker build -t hedgehogsacr.azurecr.io/api:${{ github.run_number}} ./api/
         
       - name: Log into ACR and push images
         run: |
           az acr login --name hedgehogsacr
-          docker push hedgehogsacr.azurecr.io/api:latest
+          docker push hedgehogsacr.azurecr.io/api:${{ github.run_number }}
 
-      # - name: Applying new images
-      #   run: kubectl apply -f everything.yaml
+      - name: Export github.run_number
+        run: |
+          echo "TAG=${{ github.run_number }}" >> $GITHUB_ENV
         
       - name: Restart deployments to apply changes
-        run: kubectl rollout restart deployments/api --namespace ch4-demo
+        run: envsubst < ./yaml_files/api-deployment.yaml | kubectl apply -f -

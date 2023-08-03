@@ -5,6 +5,8 @@ on:
       - main
     paths:
       - 'ui/**'
+  workflow_dispatch:
+
 
 permissions:
       id-token: write
@@ -27,12 +29,17 @@ jobs:
         run: az aks get-credentials --resource-group hedgehogs-chapter-4 --name hedgehogs-cluster
 
       - name: Build new UI image
-        run: docker build -t hedgehogsacr.azurecr.io/ui:latest ./ui/ 
+        run: |
+          DOCKER_BUILDKIT=1 docker build -t hedgehogsacr.azurecr.io/ui:${{ github.run_number }} ./ui/ 
         
       - name: Log into ACR and push images
         run: |
           az acr login --name hedgehogsacr
-          docker push hedgehogsacr.azurecr.io/ui:latest
+          docker push hedgehogsacr.azurecr.io/ui:${{ github.run_number }}
+
+      - name: Export github.run_number
+        run: |
+          echo "TAG=${{ github.run_number }}" >> $GITHUB_ENV
         
       - name: Restart deployments to apply changes
-        run: kubectl rollout restart deployments/ui --namespace ch4-demo
+        run: envsubst < ./yaml_files/ui-deployment.yaml | kubectl apply -f -
