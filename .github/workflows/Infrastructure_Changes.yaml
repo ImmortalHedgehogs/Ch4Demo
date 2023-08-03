@@ -22,7 +22,22 @@ jobs:
           client-id: ${{ secrets.AZ_CLIENT_ID }}
           tenant-id: ${{ secrets.AZ_TENANT_ID }}
           subscription-id: ${{ secrets.AZ_SUBSCRIPTION_ID }}
-          
+
+      - name: Login to ACR
+        run: az acr login --name hedgehogsacr 
+
+      - name: Query ACR for latest UI image
+        run: echo "TAG=$(az acr repository show-tags -n hedgehogsacr --repository ui --top 1 --orderby time_desc | tr -d '["] \n')" >> $GITHUB_ENV
+
+      - name: Redeploy UI
+        run: envsubst < ./deployments/ui-deployment.yaml | kubectl apply -f -
+
+      - name: Query ACR for latest API image
+        run: echo "TAG=$(az acr repository show-tags -n hedgehogsacr --repository api --top 1 --orderby time_desc | tr -d '["] \n')" >> $GITHUB_ENV
+
+      - name: Redeploy API
+        run: envsubst < ./deployments/api-deployment.yaml | kubectl apply -f -
+
       - name: Link runner to cluster
         run: az aks get-credentials --resource-group hedgehogs-chapter-4 --name hedgehogs-cluster
 
