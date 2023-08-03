@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  namespace: ch4-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: api
+  template:
+    metadata:
+      labels:
+        name: api
+    spec:
+      containers:
+      - name: api
+        image: hedgehogsacr.azurecr.io/api:${TAG}
+        ports:
+        - containerPort: 8080

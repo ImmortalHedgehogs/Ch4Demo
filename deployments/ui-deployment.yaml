@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ui
+  namespace: ch4-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: ui
+  template:
+    metadata:
+      labels:
+        name: ui
+    spec:
+      containers:
+      - name: ui
+        image: hedgehogsacr.azurecr.io/ui:${TAG}
+        ports:
+        - containerPort: 3000
+        env:
+        - name: KNOWLEDGE_SHARE_API
+          value: http://api:8080
