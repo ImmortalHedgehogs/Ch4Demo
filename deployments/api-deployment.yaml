@@ -4,7 +4,7 @@ metadata:
   name: api
   namespace: ch4-demo
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       name: api
