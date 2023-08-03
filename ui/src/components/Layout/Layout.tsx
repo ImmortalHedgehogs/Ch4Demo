@@ -19,7 +19,7 @@ const Layout = ({ children }: Props) => (
             <span className={globalStyles.logo}>
               <Image
                 src="/dojo-logo-sm.png"
-                //src="/hedgehog.png" 
+                // src="/hedgehog.png" 
                 alt="dojo-small"
                 width={50}
                 height={50}
