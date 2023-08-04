@@ -42,4 +42,4 @@ jobs:
           echo "TAG=${{ github.SHA }}" >> $GITHUB_ENV
         
       - name: Restart deployments to apply changes
-        run: envsubst < ./yaml_files/ui-deployment.yaml | kubectl apply -f -
+        run: envsubst < ./deployments/ui-deployment.yaml | kubectl apply -f -

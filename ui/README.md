@@ -2,7 +2,7 @@
 ![CodeQL](https://github.com/liatrio-delivery-povs/devops-knowledge-share-ui/workflows/CodeQL/badge.svg?branch=main)
 
 # DevOps Knowledge Share DOB UI 
-
+ 
 ## Getting Started
 
 > **_Note:_** Please note this is the DevOps Bootcamp version of the [DevOps Knowledge Share UI](https://github.com/liatrio-delivery-povs/devops-knowledge-share-ui). Some of the contents of this repo were sanitized and various links/references may no longer function.
